@@ -11,22 +11,22 @@ router.get('/', (req, res) => {
      })
      .catch(error => {
           console.log(error)
-          res.status(500).json({
-               message: "Error retrieving post"
-            })
+          res.status(500).json({ error: "Post could not be accessed." })
         })
    })
    
    router.get('/:id', (req, res) => {
         db.findById(req.params.id)
         .then(post => {
-             res.status(200).json(post)
+            if(post){
+                res.status(200).json(post)
+           } else{
+                res.status(404).json({ message: "The post with this ID does not exist." })
+           }
         })
         .catch(error => {
              console.log(error)
-             res.status(500).json({
-                  message: "Error retrieving post"
-          })
+             res.status(500).json({ error: "Post could not be accessed." })
      })
 })
 
@@ -53,5 +53,19 @@ router.post('/:id/comments', (req, res)=> {
          res.status(201).json(comment)
     })
 })
+
+router.delete('/:id', (req,res)=> {
+    db.remove(req.params.id)
+    .then(post => {
+         res.status(201).json(post)
+    })
+})
+router.put('/:id', (req, res) => {
+    db.update(req.params.id, req.body)
+    .then(post => {
+         res.status(201).json(post)
+    })
+})
+
 
 module.exports = router;
